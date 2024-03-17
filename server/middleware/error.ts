@@ -25,13 +25,13 @@ export const ErrorMiddleware = (
   // Handle JSON web token error
   if (err.name === "JsonWebTokenError") {
     const message = "Json web token is invalid, try again";
-    err = new ErrorHandler(message, 401);
+    err = new ErrorHandler(message, 400);
   }
 
   // Handle JWT expired error
   if (err.name === "TokenExpiredError") {
     const message = "Json web token is expired, try again";
-    err = new ErrorHandler(message, 401);
+    err = new ErrorHandler(message, 400);
   }
 
   res.status(err.statusCode).json({
