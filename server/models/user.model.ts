@@ -14,7 +14,7 @@ export interface IUser extends Document {
   role: string;
   isVerified: boolean;
   courses: Array<{ courseId: string }>;
-  comparePassword:(password: string)=> Promise<boolean>;
+  comparePassword: (password: string) => Promise<boolean>;
 }
 
 const userSchema: Schema<IUser> = new mongoose.Schema(
@@ -54,8 +54,10 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
     },
     courses: [{ courseId: String }],
   },
+  
   { timestamps: true }
 );
+
 userSchema.pre<IUser>("save", async function (next) {
   if (!this.isModified("password")) {
     next();
