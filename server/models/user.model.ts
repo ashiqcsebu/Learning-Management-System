@@ -54,13 +54,21 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
     },
     courses: [{ courseId: String }],
   },
-  
+
   { timestamps: true }
 );
 
 userSchema.pre<IUser>("save", async function (next) {
   if (!this.isModified("password")) {
     next();
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(this.password, 10);
+    this.password = hashedPassword;
+    next();
+  } catch (error: any) {
+    next(error);
   }
 });
 

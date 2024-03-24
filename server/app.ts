@@ -14,6 +14,8 @@ app.use(cors({ origin: process.env.ORIGIN }));
 
 app.use("/api/v1",userRouter);
 
+
+
 app.get("/test", (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json({
     success: true,
