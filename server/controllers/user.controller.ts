@@ -5,6 +5,7 @@ import ErrorHandler from "../utilis/ErrorHandler";
 import UserModel, { IUser } from "../models/user.model";
 import jwt, { Secret } from "jsonwebtoken";
 import ejs from "ejs";
+import path from "path";
 
 interface IRegistrationBody {
   name: string;
@@ -27,11 +28,25 @@ export const registrationUser = CatchAsyncError(
         password,
       };
       const activationToken = createActivationToken(user);
-      const activationCode= activationToken.activationCode;
-      const data={user:{name:user.name}  , activationCode};
-      const html = await ejs.renderFile(path.join(__dirname, 'views', 'your_template.ejs'), { /* your data object */ });
+      const activationCode = activationToken.activationCode;
+      const data = { user: { name: user.name }, activationCode };
+      const html = await ejs.renderFile(
+        path.join(__dirname, "../mails/activation-mail.ejs"),
+        data
+      );
 
-
+      try {
+        await sendMail({
+          email: user.email,
+          subject: "Active Your Email",
+          template: "activation-mail.ejs",
+          data,
+        });
+        res.status(201).json({
+          success: true,
+          message: "Please check Your email",
+        });
+      } catch (error) {}
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
@@ -60,3 +75,11 @@ export const createActivationToken = (user: IUser): IActivationToken => {
 
   return { token, activationToken: activationCode };
 };
+function sendMail(arg0: {
+  email: string;
+  subject: string;
+  template: string;
+  data: { user: { name: string }; activationCode: any };
+}) {
+  throw new Error("Function not implemented.");
+}
