@@ -6,7 +6,9 @@ import UserModel, { IUser } from "../models/user.model";
 import jwt, { Secret } from "jsonwebtoken";
 import ejs from "ejs";
 import path from "path";
+import sendMail from "../utilis/sendMail";
 
+//register user
 interface IRegistrationBody {
   name: string;
   email: string;
@@ -44,9 +46,12 @@ export const registrationUser = CatchAsyncError(
         });
         res.status(201).json({
           success: true,
-          message: "Please check Your email",
+          message: `Please check Your email ${user.email} to activate your account`,
+          activationToken: activationToken.token,
         });
-      } catch (error) {}
+      } catch (error: any) {
+        return next(new ErrorHandler(error.message, 400));
+      }
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
@@ -56,10 +61,9 @@ export const registrationUser = CatchAsyncError(
 interface IActivationToken {
   activationCode: any;
   token: string;
-  activationToken: string;
 }
 
-export const createActivationToken = (user: IUser): IActivationToken => {
+export const createActivationToken = (user: any): IActivationToken => {
   const activationCode = Math.floor(1000 + Math.random() * 9000).toString();
 
   const token = jwt.sign(
@@ -72,14 +76,6 @@ export const createActivationToken = (user: IUser): IActivationToken => {
       expiresIn: "5m",
     }
   );
-
-  return { token, activationToken: activationCode };
+  return { activationCode, token };
 };
-function sendMail(arg0: {
-  email: string;
-  subject: string;
-  template: string;
-  data: { user: { name: string }; activationCode: any };
-}) {
-  throw new Error("Function not implemented.");
-}
+
