@@ -2,11 +2,12 @@ require("dotenv").config();
 import { NextFunction, Request, Response } from "express";
 import { CatchAsyncError } from "../middleware/catchAsyncErrors";
 import ErrorHandler from "../utilis/ErrorHandler";
-import UserModel, { IUser } from "../models/user.model";
+import userModel, { IUser } from "../models/user.model";
 import jwt, { Secret } from "jsonwebtoken";
 import ejs from "ejs";
 import path from "path";
 import sendMail from "../utilis/sendMail";
+import { sendToken } from "../utilis/jwt";
 
 //register user
 interface IRegistrationBody {
@@ -20,7 +21,7 @@ export const registrationUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { name, email, password } = req.body;
-      const isEmailExist = await UserModel.findOne({ email });
+      const isEmailExist = await userModel.findOne({ email });
       if (isEmailExist) {
         return next(new ErrorHandler("Email Already Exist", 400));
       }
@@ -102,13 +103,13 @@ export const activateUser = CatchAsyncError(
 
       const { user } = decodedToken;
 
-      const existingUser = await UserModel.findOne({ email: user.email });
+      const existingUser = await userModel.findOne({ email: user.email });
 
       if (existingUser) {
         return next(new ErrorHandler("Email Already Exists", 400));
       }
 
-      const createUser = await UserModel.create({
+      const createUser = await userModel.create({
         name: user.name,
         email: user.email,
         password: user.password,
@@ -118,6 +119,34 @@ export const activateUser = CatchAsyncError(
         success: true,
         message: "Account Creation Successful",
       });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
+interface ILoginRequest {
+  email: string;
+  password: string;
+}
+
+export const loginUser = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email, password } = req.body as ILoginRequest;
+      if (!email || !password) {
+        return next(new ErrorHandler("Please enter email or passord", 400));
+      }
+      const user = await userModel.findOne({ email }).select("+password");
+      if (!user) {
+        return next(new ErrorHandler("Invalid email or passord", 400));
+      }
+      const isMatchPassword = await user.comparePassword(password);
+      if (!isMatchPassword) {
+        return next(new ErrorHandler("Incorrect password", 400));
+      }
+      sendToken(user, 200, res);
+      
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
