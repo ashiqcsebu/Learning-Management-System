@@ -12,8 +12,8 @@ interface ITokenOptions {
 }
 
 export const sendToken = (user: IUser, statusCode: number, res: Response) => {
-  const accessToken = user.SignAccessToken(); 
-  const refreshToken = user.SignRefreshToken(); 
+  const accessToken = user.SignAccessToken();
+  const refreshToken = user.SignRefreshToken();
 
   // Upload session to Redis
   redis.set(user._id, JSON.stringify(user) as any);
@@ -41,11 +41,10 @@ export const sendToken = (user: IUser, statusCode: number, res: Response) => {
     httpOnly: true,
     sameSite: "lax",
   };
- 
+
   // Set secure flag to true for cookies in production
   if (process.env.NODE_ENV === "production") {
     accessTokenOptions.secure = true;
-    
   }
 
   // Set access token and refresh token cookies
@@ -55,6 +54,6 @@ export const sendToken = (user: IUser, statusCode: number, res: Response) => {
   // Send response with success message and status code
   res.status(statusCode).json({
     success: true,
-     message: "Access Token Working Perfectly",
+    message: "Log In Success ,Access Token Working",
   });
 };
