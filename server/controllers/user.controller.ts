@@ -215,6 +215,7 @@ export const updateAccessToken = CatchAsyncError(
           expiresIn: "3d",
         }
       );
+      req.user = user;
       res.cookie("access_token", accessToken, accessTokenOptions);
       res.cookie("refresh_token", refreshToken, refreshTokenOptions);
 
@@ -271,33 +272,79 @@ interface IUpdateUserInfo {
   avatar: string;
 }
 
+
 export const updateUserInfo = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { name, email } = req.body as IUpdateUserInfo;
       const userId = req.user?._id;
+      
+      // Check if user exists
       const user = await userModel.findById(userId);
+      if (!user) {
+        return next(new ErrorHandler("User not found", 404));
+      }
 
-      if (email && user) {
+      if (email) {
+        // Check for existing email
         const isEmailExist = await userModel.findOne({ email });
-        if (isEmailExist) {
-          return next(new ErrorHandler("Email already exist", 400));
+        if (isEmailExist && isEmailExist._id.toString() !== userId) {
+          return next(new ErrorHandler("Email already exists", 400));
         }
         user.email = email;
       }
-      if (name && user) {
+
+      if (name) {
         user.name = name;
       }
 
       await user?.save();
+      
+      // Update Redis cache
       await redis.set(userId, JSON.stringify(user));
 
-      res.status(201).json({
+      res.status(200).json({
         success: true,
         user,
       });
     } catch (error: any) {
-      return next(new ErrorHandler(error.message, 400));
+      // Custom error handling
+      let errorMessage = "Something went wrong";
+      if (error.code === 11000) {
+        errorMessage = "Duplicate key error: Email already exists";
+      }
+      return next(new ErrorHandler(errorMessage, 500));
     }
   }
 );
+/************** I Used chatgpt modified code to get better outcome ****************/
+// export const updateUserInfo = CatchAsyncError(
+//   async (req: Request, res: Response, next: NextFunction) => {
+//     try 
+//       const { name, email } = req.body as IUpdateUserInfo;
+//       const userId = req.user?._id;
+//       const user = await userModel.findById(userId);
+
+//       if (email && user) {
+//         const isEmailExist = await userModel.findOne({ email });
+//         if (isEmailExist) {
+//           return next(new ErrorHandler("Email already exist", 400));
+//         }
+//         user.email = email;
+//       }
+//       if (name && user) {
+//         user.name = name;
+//       }
+
+//       await user?.save();
+//       await redis.set(userId, JSON.stringify(user));
+
+//       res.status(201).json({
+//         success: true,
+//         user,
+//       });
+//     } catch (error: any) {
+//       return next(new ErrorHandler(error.message, 400));
+//     }
+//   }
+// );
