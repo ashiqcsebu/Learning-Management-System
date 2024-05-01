@@ -272,13 +272,12 @@ interface IUpdateUserInfo {
   avatar: string;
 }
 
-
 export const updateUserInfo = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { name, email } = req.body as IUpdateUserInfo;
       const userId = req.user?._id;
-      
+
       // Check if user exists
       const user = await userModel.findById(userId);
       if (!user) {
@@ -299,7 +298,7 @@ export const updateUserInfo = CatchAsyncError(
       }
 
       await user?.save();
-      
+
       // Update Redis cache
       await redis.set(userId, JSON.stringify(user));
 
@@ -317,10 +316,54 @@ export const updateUserInfo = CatchAsyncError(
     }
   }
 );
+
+// Update user password
+interface IUpdatePassword {
+  oldPassword: string;
+  newPassword: string;
+}
+
+export const updatePassword = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { oldPassword, newPassword } = req.body as IUpdatePassword;
+      if (!oldPassword || !newPassword) {
+        return next(
+          new ErrorHandler(
+            "Please Enter Both Old Password and New Password",
+            400
+          )
+        );
+      }
+
+      const user = await userModel.findById(req.user?._id).select("+password");
+      if (!user || user.password === undefined) {
+        return next(new ErrorHandler("Invalid User", 400));
+      }
+
+      const isPasswordMatch = await user.comparePassword(oldPassword);
+      if (!isPasswordMatch) {
+        return next(new ErrorHandler("Invalid Old Password", 400));
+      }
+
+      user.password = newPassword;
+      await user.save();
+      await redis.set(req.user?._id, JSON.stringify(user));
+
+      res.status(201).json({
+        success: true,
+        user,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler((error as Error).message, 400));
+    }
+  }
+);
+
 /************** I Used chatgpt modified code to get better outcome ****************/
 // export const updateUserInfo = CatchAsyncError(
 //   async (req: Request, res: Response, next: NextFunction) => {
-//     try 
+//     try
 //       const { name, email } = req.body as IUpdateUserInfo;
 //       const userId = req.user?._id;
 //       const user = await userModel.findById(userId);
