@@ -5,6 +5,7 @@ import cloudinary from "cloudinary";
 import { createCourse } from "../services/course.service";
 import courseModel from "../models/course.model";
 import { redis } from "../utilis/redis";
+import mongoose from "mongoose";
 
 export const uploadCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -122,6 +123,79 @@ export const getAllCourse = CatchAsyncError(
           courses,
         });
       }
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+export const getCourseByUser = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userCourseList = req.user?.courses;
+      const courseId = req.params.id;
+      const courseExist = userCourseList?.find(
+        (course: any) => course._id.toString() === courseId
+      );
+
+      if (!courseExist) {
+        return next(
+          new ErrorHandler("You are not allowed to access the course", 404)
+        );
+      }
+
+      const course = await courseModel.findById(courseId);
+      if (!course) {
+        return next(new ErrorHandler("Course not found", 404));
+      }
+
+      const content = course.courseData;
+
+      res.status(200).json({
+        success: true,
+        content,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+//add question in course content
+interface IAddQuestionData {
+  question: string;
+  courseId: string;
+  contentId: string;
+}
+
+export const addQuestion = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { question, contentId, courseId }: IAddQuestionData = req.body;
+      const course = await courseModel.findById(courseId);
+
+      if (!mongoose.Types.ObjectId.isValid(contentId)) {
+        return next(new ErrorHandler("Content not Found", 500));
+      }
+
+      const courseContent = course?.courseData?.find((item: any) =>
+        item._id.equals(contentId)
+      );
+
+      if (!courseContent) {
+        return next(new ErrorHandler("Content not Found", 500));
+      }
+      const newQuestion: any = {
+        user: req.user,
+        question,
+        questionReplies: [],
+      };
+      courseContent.questions.push(newQuestion);
+      await course?.save();
+      res.status(200).json({
+        success: true,
+        course,
+      });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
