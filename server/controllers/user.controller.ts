@@ -16,7 +16,7 @@ import {
 } from "../utilis/jwt";
 import { redis } from "../utilis/redis";
 import { getUserById } from "../services/user.service";
-import { url } from "inspector";
+
 
 //register user
 interface IRegistrationBody {

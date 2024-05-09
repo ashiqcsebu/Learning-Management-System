@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Question Reply from LMS</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style type="text/css">
+      /* Base */
+      body {
+        margin: 0;
+        padding: 0;
+        min-width: 100%;
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        background-color: #fafafa;
+        color: #222222;
+        text-decoration: none;
+      }
+     
+      p {
+        margin-top: 0;
+        margin-bottom: 24px;
+      }
+      /* Layout */
+      .email-wrapper {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      .email-header {
+        background-color: #0070f3;
+        padding: 24px;
+        color: #ffffff;
+      }
+      .email-body {
+        padding: 24px;
+        background-color: #ffffff;
+      }
+
+    </style>
+  </head>
+  <body>
+
+    <div class="email-body">
+      <div class="email-wrapper">
+        <p>Hello <%= name %>,</p>
+        <p> Check your notification to see the reply of your question.<%= title %> </p>   
+      </div>
+    </div>
+   
+  </body>
+</html>
