@@ -7,7 +7,7 @@ interface IComment extends Document {
   questionReplies?: string;
 }
 interface IReview extends Document {
-  user: object;
+  user: IUser;
   rating: number;
   comment: string;
   commentReplies: IComment[];
