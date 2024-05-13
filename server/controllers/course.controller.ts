@@ -337,7 +337,7 @@ interface IAddReviewData {
   reviewId: string;
 }
 
-export const addReplyReview = CatchAsyncError(
+export const addReplyToReview = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { comment, courseId, reviewId } = req.body as IAddReviewData;
