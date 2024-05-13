@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Activation Email</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style type="text/css">
+      /* Base */
+      body {
+        margin: 0;
+        padding: 0;
+        min-width: 100%;
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        background-color: #fafafa;
+        color: #222222;
+        text-decoration: none;
+      }
+
+      /* Heading */
+      h1 {
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 1.25;
+        margin-top: 0;
+        margin-bottom: 15px;
+        text-align: center;
+      }
+
+      /* Paragraph */
+      p {
+        margin-top: 0;
+        margin-bottom: 24px;
+      }
+      table td {
+        vertical-align: top;
+      }
+
+      /* Layout */
+      .email-wrapper {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .email-header {
+        background-color: #0070f3;
+        padding: 24px;
+        color: #ffffff;
+      }
+
+      .email-body {
+        padding: 24px;
+        background-color: #ffffff;
+      }
+
+      .email-footer {
+        background-color: #f6f6f6;
+        padding: 24px;
+      }
+
+      /* Buttons */
+      .button {
+        display: inline-block;
+        background-color: #0070f3;
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 700;
+        text-align: center;
+        text-decoration: none;
+        padding: 12px 24px;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-header">
+      <h1>Welcome to LMS</h1>
+    </div>
+    <div class="email-body">
+      <div class="email-wrapper">
+        <p>Order No. <%= order._id %>,</p>
+        <p>
+          Thank you for ordering with Elearning.
+        </p>
+        <p>Order Date. <%= order.date %>,</p>
+        <h2>Order Name<%= order.name %></h2>
+        <p>
+            <h2>Subtotal: <%= order.price %></h2>
+        </p>
+        <p>
+            <h2>Total: <%= order.price %></h2>
+        </p>
+      </div>
+    </div>
+    <div class="email-footer">
+      <p>
+        If you have any questions, please don't hesitate to contact us at
+        <a href="mailto:support@becodemy.com">support@becodemy.com</a>
+      </p>
+    </div>
+  </body>
+</html>
