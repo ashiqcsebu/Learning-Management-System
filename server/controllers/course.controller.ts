@@ -389,12 +389,33 @@ export const addReplyToReview = CatchAsyncError(
   }
 );
 
-
 // get all courses -- only for admin
 export const getAllCourses = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       getAllCoursesService(res);
+    } catch (error: any) {
+      return next(new ErrorHandler((error as Error).message, 400));
+    }
+  }
+);
+
+// delete Course -- Admin Only
+export const deleteCourse = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const course = await courseModel.findById(id);
+      if (!course) {
+        return next(new ErrorHandler("Course Not Found", 404));
+      }
+      await course.deleteOne();
+      await redis.del(id);
+
+      res.status(200).json({
+        success: true,
+        message: "Course Deleted Successfully",
+      });
     } catch (error: any) {
       return next(new ErrorHandler((error as Error).message, 400));
     }
