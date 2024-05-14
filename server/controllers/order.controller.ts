@@ -73,9 +73,9 @@ export const createOrder = CatchAsyncError(
         title: "New Order",
         message: `You have new order course name: ${course?.name}`,
       });
-      //   if (course.purchased) {
-      //     course.purchased += 1;
-      //   }
+
+     // course.purchased ? (course.purchased += 1) : course.purchased;
+
       await courseModel.findByIdAndUpdate(courseId, {
         $inc: { purchased: 1 },
       });
