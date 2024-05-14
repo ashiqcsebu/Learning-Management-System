@@ -15,8 +15,7 @@ import {
   sendToken,
 } from "../utilis/jwt";
 import { redis } from "../utilis/redis";
-import { getUserById } from "../services/user.service";
-
+import { getAllUsersService, getUserById } from "../services/user.service";
 
 //register user
 interface IRegistrationBody {
@@ -410,34 +409,14 @@ export const updateProfilePicture = CatchAsyncError(
   }
 );
 
-/************** I Used chatgpt modified code to get better outcome ****************/
-// export const updateUserInfo = CatchAsyncError(
-//   async (req: Request, res: Response, next: NextFunction) => {
-//     try
-//       const { name, email } = req.body as IUpdateUserInfo;
-//       const userId = req.user?._id;
-//       const user = await userModel.findById(userId);
 
-//       if (email && user) {
-//         const isEmailExist = await userModel.findOne({ email });
-//         if (isEmailExist) {
-//           return next(new ErrorHandler("Email already exist", 400));
-//         }
-//         user.email = email;
-//       }
-//       if (name && user) {
-//         user.name = name;
-//       }
-
-//       await user?.save();
-//       await redis.set(userId, JSON.stringify(user));
-
-//       res.status(201).json({
-//         success: true,
-//         user,
-//       });
-//     } catch (error: any) {
-//       return next(new ErrorHandler(error.message, 400));
-//     }
-//   }
-// );
+// get all users -- only for admin
+export const getAllUsers = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      getAllUsersService(res)
+    } catch (error: any) {
+      return next(new ErrorHandler((error as Error).message, 400));
+    }
+  }
+);
