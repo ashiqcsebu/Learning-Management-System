@@ -15,7 +15,7 @@ import {
   sendToken,
 } from "../utilis/jwt";
 import { redis } from "../utilis/redis";
-import { getAllUsersService, getUserById } from "../services/user.service";
+import { getAllUsersService, getUserById, updateUserRoleService } from "../services/user.service";
 
 //register user
 interface IRegistrationBody {
@@ -409,12 +409,23 @@ export const updateProfilePicture = CatchAsyncError(
   }
 );
 
-
 // get all users -- only for admin
 export const getAllUsers = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      getAllUsersService(res)
+      getAllUsersService(res);
+    } catch (error: any) {
+      return next(new ErrorHandler((error as Error).message, 400));
+    }
+  }
+);
+
+// update user status -- only for admin
+export const updateUserRole = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id, role } = req.body;
+      updateUserRoleService(res, id, role);
     } catch (error: any) {
       return next(new ErrorHandler((error as Error).message, 400));
     }
