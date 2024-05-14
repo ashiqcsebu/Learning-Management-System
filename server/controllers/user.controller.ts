@@ -15,7 +15,11 @@ import {
   sendToken,
 } from "../utilis/jwt";
 import { redis } from "../utilis/redis";
-import { getAllUsersService, getUserById, updateUserRoleService } from "../services/user.service";
+import {
+  getAllUsersService,
+  getUserById,
+  updateUserRoleService,
+} from "../services/user.service";
 
 //register user
 interface IRegistrationBody {
@@ -426,6 +430,28 @@ export const updateUserRole = CatchAsyncError(
     try {
       const { id, role } = req.body;
       updateUserRoleService(res, id, role);
+    } catch (error: any) {
+      return next(new ErrorHandler((error as Error).message, 400));
+    }
+  }
+);
+
+// delete user -- Admin Only
+export const deleteUser = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const user = await userModel.findById(id);
+      if (!user) {
+        return next(new ErrorHandler("User Not Found", 404));
+      }
+      await user.deleteOne();
+      await redis.del(id);
+
+      res.status(200).json({
+        success: true,
+        message: "User Deleted Successfully",
+      });
     } catch (error: any) {
       return next(new ErrorHandler((error as Error).message, 400));
     }
