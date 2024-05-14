@@ -31,7 +31,7 @@ export const createOrder = CatchAsyncError(
       }
       const data: any = {
         courseId: course?._id,
-        user: user?._id,
+        userId: user?._id,
         payment_info,
       };
 
@@ -71,7 +71,7 @@ export const createOrder = CatchAsyncError(
       await notificationModel.create({
         user: user?._id,
         title: "New Order",
-        message: `You have new order course name ${course?.name}`,
+        message: `You have new order course name: ${course?.name}`,
       });
       //   if (course.purchased) {
       //     course.purchased += 1;
