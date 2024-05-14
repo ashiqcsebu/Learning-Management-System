@@ -14,14 +14,14 @@ export const createOrder = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { courseId, payment_info } = req.body as IOrder;
-      const userId = req?.user?._id;
+      const userId = req.user?._id;
       const user = await userModel.findById(userId);
-      const courseExistInUser = user?.courses.some(
+      const isCourseAlreadyPurchased = user?.courses.some(
         (course: any) => course._id.toString() === courseId
       );
-      if (courseExistInUser) {
+      if (isCourseAlreadyPurchased) {
         return next(
-          new ErrorHandler("You have already purchased this course", 500)
+          new ErrorHandler("You have already purchased this course", 400)
         );
       }
       const course = await courseModel.findById(courseId);
@@ -73,12 +73,15 @@ export const createOrder = CatchAsyncError(
         title: "New Order",
         message: `You have new order course name ${course?.name}`,
       });
-      if (course.purchased) {
-        course.purchased += 1;
-      }
+      //   if (course.purchased) {
+      //     course.purchased += 1;
+      //   }
+      await courseModel.findByIdAndUpdate(courseId, {
+        $inc: { purchased: 1 },
+      });
+
       await course?.save();
       newOrder(data, res, next);
-      
     } catch (error: any) {
       return next(new ErrorHandler((error as Error).message, 500));
     }
