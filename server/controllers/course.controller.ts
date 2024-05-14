@@ -10,6 +10,7 @@ import ejs from "ejs";
 import path from "path";
 import sendMail from "../utilis/sendMail";
 import { title } from "process";
+import notificationModel from "../models/notification.model";
 
 export const uploadCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -195,6 +196,14 @@ export const addQuestion = CatchAsyncError(
         questionReplies: [],
       };
       courseContent.questions.push(newQuestion);
+
+      // Create Notification
+      await notificationModel.create({
+        user: req.user?._id,
+        title: "New Question Received",
+        message: `You have new question from ${courseContent?.title} Course`,
+      });
+
       await course?.save();
       res.status(200).json({
         success: true,
@@ -245,6 +254,12 @@ export const addAnswer = CatchAsyncError(
       await course?.save();
 
       if (req.user?._id === question.user._id) {
+        // Create Notification for reply from user
+        await notificationModel.create({
+          user: req.user?._id,
+          title: "New Question Reply Received",
+          message: `You have new question from ${courseContent?.title} Course`,
+        });
       } else {
         const data = {
           name: question.user.name,
