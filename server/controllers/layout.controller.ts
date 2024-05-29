@@ -4,7 +4,7 @@ import ErrorHandler from "../utilis/ErrorHandler";
 import cloudinary from "cloudinary";
 import layoutModel from "../models/layout.model";
 
-// crate banner, faq, categories
+// create banner, faq, categories
 export const createLayout = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -67,7 +67,7 @@ export const createLayout = CatchAsyncError(
   }
 );
 
-// crate banner, faq, categories
+// update banner, faq, categories
 export const editLayout = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -131,6 +131,23 @@ export const editLayout = CatchAsyncError(
       res.status(200).json({
         success: true,
         message: "Layout updated Successfully",
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler((error as Error).message, 400));
+    }
+  }
+);
+
+// get layout by type
+
+export const getLayoutByType = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { type } = req.body;
+      const layout = await layoutModel.findOne({ type });
+      res.status(201).json({
+        success: true,
+        layout,
       });
     } catch (error: any) {
       return next(new ErrorHandler((error as Error).message, 400));
