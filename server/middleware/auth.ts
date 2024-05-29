@@ -23,7 +23,9 @@ export const isAuthenticated = CatchAsyncError(
 
     const user = await redis.get(decoded.id);
     if (!user) {
-      return next(new ErrorHandler("User Not Found", 400));
+      return next(
+        new ErrorHandler("Please login to access this resource", 400)
+      );
     }
 
     req.user = JSON.parse(user);
@@ -34,18 +36,17 @@ export const isAuthenticated = CatchAsyncError(
 //Validate User Role
 
 export const authorizeRoles = (...roles: string[]) => {
-    return (req: Request, res: Response, next: NextFunction) => {
-      if (!roles.includes(req.user?.role || "")) {
-        return res.status(403).json({
-          success: false,
-          message: `Role: ${req.user?.role} is not allowed to access this resource`,
-        });
-      }
-  
-      next();
-    };
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!roles.includes(req.user?.role || "")) {
+      return res.status(403).json({
+        success: false,
+        message: `Role: ${req.user?.role} is not allowed to access this resource`,
+      });
+    }
+
+    next();
   };
-  
+};
 
 // export const authorizeRoles = (...roles: string[]) => {
 //   return (req: Request, res: Response, next: NextFunction) => {
@@ -73,4 +74,3 @@ export const authorizeRoles = (...roles: string[]) => {
 //     next();
 //   };
 // };
-
