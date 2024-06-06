@@ -6,12 +6,12 @@ const config: Config = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  darkMode: "class",
+  darkMode: ["class"],
   theme: {
     extend: {
       fontFamily: {
-        Poppins: ["Poppins", "sans-serif"],
-        Josefin: ["Josefin Sans", "sans-serif"],
+        Poppins: ["var(--font-Poppins)"],
+        Josefin: ["var(--font-Josefin)"],
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
