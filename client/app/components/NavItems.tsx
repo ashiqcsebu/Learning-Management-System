@@ -10,7 +10,7 @@ export const NavItemsData = [
     url: "/courses",
   },
   {
-    name: "About Us",
+    name: "About We",
     url: "/about",
   },
   {
