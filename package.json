@@ -1,5 +1,14 @@
 {
   "dependencies": {
-    "cloudinary": "^2.2.0"
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.4.3",
+    "@mui/material": "^6.4.3",
+    "@reduxjs/toolkit": "^2.5.1",
+    "cloudinary": "^2.2.0",
+    "formik": "^2.4.6",
+    "react-hot-toast": "^2.5.1",
+    "react-redux": "^9.2.0",
+    "yup": "^1.6.1"
   }
 }
