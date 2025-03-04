@@ -11,20 +11,23 @@ type Props = {
 };
 
 const schema = Yup.object().shape({
+    name: Yup.string().required('Name is required'),
     email: Yup.string().email('Invalid email').required('Email is required'),
     password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
 });
 
-const Login: FC<Props> = ({ setRoute }) => {
+const SignUp: FC<Props> = ({ setRoute }) => {
     const [show, setShow] = useState(false);
     const formik = useFormik({
         initialValues: {
+            name: '',
             email: '',
             password: ''
         },
         validationSchema: schema,
-        onSubmit: async ({ email, password }) => {
-            console.log(email, password);
+        onSubmit: async ({ name, email, password }) => {
+            setRoute('Verification');
+            console.log(name, email, password);
         }
     });
 
@@ -33,10 +36,28 @@ const Login: FC<Props> = ({ setRoute }) => {
     return (
         <div className='w-full'>
             <h1 className={`${styles.title}`}>
-                Login with E Learning
+                Join to E Learning
             </h1>
             <form onSubmit={handleSubmit}>
                 <div className='flex flex-col'>
+                    <label className={`${styles.label}`} htmlFor='name'>
+                        Enter your Name
+                    </label>
+                    <input
+                        type='text'
+                        id='name'
+                        name='name'
+                        placeholder='Ashiqul Islam'
+                        value={values.name}
+
+                        onChange={handleChange}
+                        className={`${styles.input}`}
+                    />
+                    {errors.name && touched.name && (
+                        <div className='text-red-500'>{errors.name}</div>
+                    )}
+                </div>
+                <div className='flex flex-col mt-4'>
                     <label className={`${styles.label}`} htmlFor='email'>
                         Enter your Email
                     </label>
@@ -66,13 +87,14 @@ const Login: FC<Props> = ({ setRoute }) => {
                             placeholder='$abc1234#'
                             value={values.password}
                             onChange={handleChange}
-                            className={`${styles.input} w-full`}
+                            className={`${styles.input} w-full`} 
+                            
                         />
                         <span
-                            className='absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer'
+                            className='absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500'
                             onClick={() => setShow(!show)}
                         >
-                            {show ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+                            {show ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
                         </span>
                     </div>
                     {errors.password && touched.password && (
@@ -80,12 +102,14 @@ const Login: FC<Props> = ({ setRoute }) => {
                     )}
                 </div>
 
+              
 
                 <button
                     type='submit'
+
                     className={`${styles.button} mt-4`}
                 >
-                    Login
+                    Sign Up
                 </button>
                 <div className='mt-4'>
                     <p className='text-center'>Or Join with</p>
@@ -94,11 +118,11 @@ const Login: FC<Props> = ({ setRoute }) => {
                         <AiFillGithub size={25} className='cursor-pointer ml-2' />
                     </div>
                 </div>
-                <h5 className='text-center font-poppins pt-4'>Not have any Account ?
+                <h5 className='text-center font-poppins pt-4'>Already have an Account ?
                     <span
                         className="text-blue-400 cursor-pointer ml-2"
-                        onClick={() => setRoute('Sign-Up')}
-                    >Sign up
+                        onClick={() => setRoute('Login')}
+                    >Login
                     </span>
                 </h5>
             </form>
@@ -107,4 +131,4 @@ const Login: FC<Props> = ({ setRoute }) => {
     );
 };
 
-export default Login;
+export default SignUp;
