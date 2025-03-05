@@ -107,7 +107,7 @@ const SignUp: FC<Props> = ({ setRoute }) => {
                 <button
                     type='submit'
 
-                    className={`${styles.button} mt-4`}
+                    className={`${styles.button}hover:bg-blue-600 mt-4`}
                 >
                     Sign Up
                 </button>
@@ -120,7 +120,7 @@ const SignUp: FC<Props> = ({ setRoute }) => {
                 </div>
                 <h5 className='text-center font-poppins pt-4'>Already have an Account ?
                     <span
-                        className="text-blue-400 cursor-pointer ml-2"
+                       className="text-blue-400 text-black cursor-pointer ml-2"
                         onClick={() => setRoute('Login')}
                     >Login
                     </span>

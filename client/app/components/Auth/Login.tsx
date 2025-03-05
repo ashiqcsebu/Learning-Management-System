@@ -83,7 +83,7 @@ const Login: FC<Props> = ({ setRoute }) => {
 
                 <button
                     type='submit'
-                    className={`${styles.button} mt-4`}
+                    className={`${styles.button} hover:bg-blue-600 mt-4`}
                 >
                     Login
                 </button>
@@ -94,7 +94,7 @@ const Login: FC<Props> = ({ setRoute }) => {
                         <AiFillGithub size={25} className='cursor-pointer ml-2' />
                     </div>
                 </div>
-                <h5 className='text-center font-poppins pt-4'>Not have any Account ?
+                <h5 className='text-center font-poppins pt-4'>Don't have any Account ?
                     <span
                         className="text-blue-400 cursor-pointer ml-2"
                         onClick={() => setRoute('Sign-Up')}
