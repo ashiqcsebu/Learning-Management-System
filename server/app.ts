@@ -13,7 +13,16 @@ import layoutRouter from "./routes/layout.route";
 app.use(express.json({ limit: "50mb" }));
 app.use(cookieParser());
 app.use(ErrorMiddleware);
-app.use(cors({ origin: process.env.ORIGIN }));
+//app.use(cors({ origin: process.env.ORIGIN }));
+
+
+app.use(
+  cors({
+    origin: ["http://localhost:3000"], 
+    credentials: true, // Allow cookies to be sent from client
+   // methods: ["GET", "POST", "PUT", "DELETE"], // Allowed request methods
+  })
+);
 
 app.use(
   "/api/v1",
