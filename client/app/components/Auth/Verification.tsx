@@ -1,6 +1,8 @@
-import React, { FC, useRef, useState } from 'react';
+import { useActivationMutation } from '@/redux/features/auth/authApi';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { VscWorkspaceTrusted } from 'react-icons/vsc';
+import { useSelector } from 'react-redux';
 
 type Props = {
   setRoute: (route: string) => void;
@@ -14,7 +16,27 @@ type VerifyNumber = {
 };
 
 const Verification: FC<Props> = ({ setRoute }) => {
+  const { token } = useSelector((state: any) => state.auth);
+  const [activation, { isSuccess, error }] = useActivationMutation();
   const [invalidError, setInvalidError] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Account activated successfully");
+      setRoute('Login');
+    }
+    if (error) {
+      if ("data" in error) {
+        const errorData = error as any;
+        toast.error(errorData.data.message)
+        setInvalidError(true);
+      }
+      else {
+        console.log("activation error:", error);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuccess, error]);
 
   const inputRefs = [
     useRef<HTMLInputElement>(null),
@@ -51,14 +73,12 @@ const Verification: FC<Props> = ({ setRoute }) => {
   };
 
   const verificationHandler = async () => {
-    const code = Object.values(verifyNumber).join("");
-    if (code.length < 4) {
+    const verificationNumber = Object.values(verifyNumber).join("");
+    if (verificationNumber.length !== 4) {
       setInvalidError(true);
-      toast.error("Please enter the full code");
       return;
     }
-    console.log("Verification code:", code);
-    // Proceed with API call or logic
+    await activation({ activation_code: verificationNumber, activation_token: token });
   };
 
   return (
