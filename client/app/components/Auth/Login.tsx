@@ -114,7 +114,7 @@ const Login: FC<Props> = ({ setRoute, setOpen }) => {
                         <AiFillGithub size={25} className='cursor-pointer ml-2' />
                     </div>
                 </div>
-                <h5 className='text-center font-poppins pt-4'> Don't have any Account ?
+                <h5 className='text-center font-poppins pt-4'> Not have any Account ?
                     <span
                         className="text-blue-400 cursor-pointer ml-2"
                         onClick={() => setRoute('Sign-Up')}
