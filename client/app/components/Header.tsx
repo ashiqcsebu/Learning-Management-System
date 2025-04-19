@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
 import Link from "next/link";
 import React, { FC, useState, useEffect } from "react";
@@ -8,6 +9,9 @@ import CustomModal from "../utils/CustomModal";
 import Login from "../components/Auth/Login";
 import SignUp from "../components/Auth/SignUp";
 import Verification from "../components/Auth/Verification"
+import { useSelector } from "react-redux";
+import Image from "next/image";
+import avatar from "../../public/assets/man-1.jpg"
 
 type Props = {
   open: boolean;
@@ -20,6 +24,7 @@ type Props = {
 const Header: FC<Props> = ({ open, setOpen, activeItem, route, setRoute }) => {
   const [active, setActive] = useState(false);
   const [openSidebar, setOpenSidebar] = useState(false);
+  const { user } = useSelector((state: any) => state.auth);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -69,11 +74,26 @@ const Header: FC<Props> = ({ open, setOpen, activeItem, route, setRoute }) => {
                     onClick={() => setOpenSidebar(true)}
                   />
                 </div>
-                <HiOutlineUserCircle
-                  className="hidden 800px:block cursor-pointer dark:text-white text-black"
-                  size={25}
-                  onClick={() => setOpen(true)}
-                />
+                {
+                  user ? (
+                    <Link href={'/profile'} className="hidden 800px:block">
+                      <Image
+                        src={user.avatar ? user.avatar : avatar}
+                        alt=''
+                        width={40}
+                        height={40}
+                        className="rounded-full cursor-pointer ml-2"
+                      />
+                    </Link>
+                  ) : (
+                    <HiOutlineUserCircle
+                      className="hidden 800px:block cursor-pointer dark:text-white text-black"
+                      size={25}
+                      onClick={() => setOpen(true)}
+                    />
+                  )
+                }
+
               </div>
             </div>
           </div>
