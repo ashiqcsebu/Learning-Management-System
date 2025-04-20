@@ -18,8 +18,8 @@ app.use(ErrorMiddleware);
 
 app.use(
   cors({
-    origin: ["http://localhost:3000"], 
-    credentials: true, // Allow cookies to be sent from client
+    origin: "http://localhost:3000",
+   credentials: true, // Allow cookies to be sent from client
    // methods: ["GET", "POST", "PUT", "DELETE"], // Allowed request methods
   })
 );
@@ -33,6 +33,15 @@ app.use(
   analyticsRouter,
   layoutRouter
 );
+
+
+
+// app.use("/api/v1/users", userRouter);
+// app.use("/api/v1/courses", courseRouter);
+// app.use("/api/v1/orders", orderRouter);
+// app.use("/api/v1/notifications", notificationRouter);
+// app.use("/api/v1/analytics", analyticsRouter);
+// app.use("/api/v1/layouts", layoutRouter);
 
 app.get("/test", (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json({

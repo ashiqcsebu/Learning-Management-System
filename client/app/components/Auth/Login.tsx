@@ -7,6 +7,7 @@ import { FcGoogle } from 'react-icons/fc';  // Fixed import
 import { styles } from '../../../app/styles/style';
 import { useLoginMutation } from '@/redux/features/auth/authApi';
 import toast from 'react-hot-toast';
+import  { signIn } from 'next-auth/react';
 
 type Props = {
     setRoute: (route: string) => void;
@@ -110,8 +111,11 @@ const Login: FC<Props> = ({ setRoute, setOpen }) => {
                 <div className='mt-4'>
                     <p className='text-center'>Or Join with</p>
                     <div className='flex justify-center items-center mt-2'>
-                        <FcGoogle size={25} className='cursor-pointer' />
-                        <AiFillGithub size={25} className='cursor-pointer ml-2' />
+                        <FcGoogle size={25} className='cursor-pointer'
+                            onClick={() => signIn("google")} />
+
+                        <AiFillGithub size={25} className='cursor-pointer ml-2'
+                            onClick={() => signIn("github")} />
                     </div>
                 </div>
                 <h5 className='text-center font-poppins pt-4'> Not have any Account ?

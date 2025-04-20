@@ -12,6 +12,9 @@ import Verification from "../components/Auth/Verification"
 import { useSelector } from "react-redux";
 import Image from "next/image";
 import avatar from "../../public/assets/man-1.jpg"
+import { useSession } from "next-auth/react";
+import { useSocialAuthMutation } from "@/redux/features/auth/authApi";
+import toast from "react-hot-toast";
 
 type Props = {
   open: boolean;
@@ -25,6 +28,29 @@ const Header: FC<Props> = ({ open, setOpen, activeItem, route, setRoute }) => {
   const [active, setActive] = useState(false);
   const [openSidebar, setOpenSidebar] = useState(false);
   const { user } = useSelector((state: any) => state.auth);
+  const { data } = useSession();
+  const [socialAuth, { isSuccess, error }] = useSocialAuthMutation();
+
+  useEffect(() => {
+    if (!user && data?.user && !localStorage.getItem("social-logged-in")) {
+      socialAuth({
+        name: data.user.name,
+        email: data.user.email,
+        avatar: data.user.image,
+      });
+
+      // prevent multiple requests
+      localStorage.setItem("social-logged-in", "true");
+    }
+
+    if (isSuccess) {
+      toast.success("Logged in successfully");
+    }
+
+    if (error) {
+      toast.error("Login failed");
+    }
+  }, [data, isSuccess, error, socialAuth, user]);
 
   useEffect(() => {
     const handleScroll = () => {
